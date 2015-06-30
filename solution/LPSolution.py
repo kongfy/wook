@@ -2,11 +2,18 @@
 
 from Base import BaseSolution
 from pulp import *
+from pprint import pprint
 
 class LPSolution(BaseSolution):
     def __init__(self):
         self.n = 0
         self.m = 0
+
+    def output(self, prob, x, y):
+        print '<================ LPSolution ==================>'
+        print("Status:", LpStatus[prob.status])
+        pprint([[v.varValue for v in t] for t in x])
+        pprint([v.varValue for v in y])
 
     def solve(self, c, T, t, f):
         self.n = len(c)
@@ -31,14 +38,10 @@ class LPSolution(BaseSolution):
 
         # 4d
         for i in xrange(self.n):
-            prob += lpSum([t[i][j] * x[i][j] for j in xrange(self.m)]) <= T[i] * y[i]
+            prob += T[i] * y[i] - lpSum([t[i][j] * x[i][j] for j in xrange(self.m)]) >= 0
 
         prob.solve()
 
-        print '#======= LP solution =======#'
-        print("Status:", LpStatus[prob.status])
-
-        for v in prob.variables():
-            print v.name, '=', v.varValue
+        self.output(prob, x, y)
 
         return value(prob.objective)

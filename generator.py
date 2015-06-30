@@ -26,7 +26,7 @@ def generate():
 
         temp = []
         for j in xrange(m):
-            bound = ceil(float(b ** 2 * E) / (a * P))
+            bound = int(ceil(float(b ** 2 * E) / (a * P)))
             l, r = CFG['t']
             l += bound
             r += bound

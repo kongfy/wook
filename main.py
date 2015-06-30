@@ -18,7 +18,11 @@ def worker():
     return [solver.solve(c, T, t, f) for solver in solvers]
 
 def main():
-    print worker()
+    result = worker()
+    print result
+
+    assert(result[1] <= result[0])
+    assert(result[1] <= result[2])
 
 if __name__ == '__main__':
     main()
