@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from Base import BaseSolution
-from math import trunc
+from math import floor
 from pprint import pprint
 
 class PDBSolution(BaseSolution):
@@ -26,11 +26,11 @@ class PDBSolution(BaseSolution):
         covered = [0] * self.m
         covered_by = [0] * self.m # covering host
         edges = [[0] * self.m for i in xrange(self.n)]   # 0-None 1-Full 2-Positive
-        alpha = [0] * self.m
-        beta = [[0] * self.m for i in xrange(self.n)]
+        alpha = [0.0] * self.m
+        beta = [[0.0] * self.m for i in xrange(self.n)]
 
-        limit_alpha = [[trunc(f[i][j] + float(9 * c[i] * t[i][j]) / (10 * T[i])) for j in xrange(self.m)] for i in xrange(self.n)]
-        limit_beta = [trunc(float(c[i]) / 10) for i in xrange(self.n)]
+        limit_alpha = [[floor((f[i][j] + float(9*c[i]*t[i][j])/(10*T[i])) * 10) / 10 for j in xrange(self.m)] for i in xrange(self.n)]
+        limit_beta = [floor(float(c[i])) / 10 for i in xrange(self.n)]
 
         while sum(covered) != self.m:
             for j in xrange(self.m):
@@ -39,30 +39,36 @@ class PDBSolution(BaseSolution):
                     continue
 
                 # increase alpha
-                alpha[j] += 1
+                alpha[j] += 0.1
 
+                # check routes
                 for i in xrange(self.n):
-                    if alpha[j] == limit_alpha[i][j]:
-                        edges[i][j] = 1
+                    # full condition check
+                    if edges[i][j] == 0 and abs(alpha[j] - limit_alpha[i][j]) < 1e-6:
+                        edges[i][j] = 1 # set edge to full
+                        # case c
                         if selected[i] == 1:
                             covered[j] = 1
-                            covered_by[j] = i
+                            covered_by[j] = i # set covering host
                             break
 
+                    # edge have been selected, become positive
                     elif edges[i][j] >= 1:
-                        edges[i][j] = 2
-                        beta[i][j] += 1
+                        edges[i][j] = 2 # set edge to positive
+                        beta[i][j] += 0.1
 
-                        if sum(beta[i]) == limit_beta[i]:
-                            selected[i] = 1
+                        # select route i
+                        if abs(sum(beta[i]) - limit_beta[i]) < 1e-6:
+                            selected[i] = 1 # set to temp selected
                             for k in xrange(self.m):
+                                # cover all uncovered devices that has full edges to route i
                                 if covered[k] == 0 and edges[i][k] >= 1:
                                     covered[k] = 1
                                     covered_by[k] = i
                             break
 
         # alg2
-        g = [[0] * self.n for i in xrange(self.n)]
+        g = [[0] * self.n for i in xrange(self.n)] # n * n, G_f^2
 
         for i in xrange(self.n):
             for j in xrange(self.n):
@@ -72,10 +78,12 @@ class PDBSolution(BaseSolution):
                 if selected[i] != 1 or selected[j] != 1:
                     continue
                 for k in xrange(self.m):
-                    if edges[i][k] == 2 and edges[j][k] == 2:
+                    if edges[i][k] == 2 and edges[j][k] == 2: # only positive edges
                         g[i][j] = 1
 
-        D = [False] * self.n
+        # here we got G_f^2
+
+        D = [False] * self.n # maximal independent set
         color = [False] * self.n
         for i in xrange(self.n):
             # induced by R_t
@@ -92,12 +100,13 @@ class PDBSolution(BaseSolution):
         for i in xrange(self.n):
             if D[i]:
                 y[i] = 1
-                selected[i] = 2
+                selected[i] = 2 # final selected
 
         x = [[0] * self.m for i in xrange(self.n)]
         for j in xrange(self.m):
             flag = False
             for i in xrange(self.n):
+                # R_j
                 if selected[i] >= 1 and beta[i][j] > 0:
                     # case 1
                     if selected[i] == 2:

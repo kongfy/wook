@@ -8,9 +8,7 @@ class HeuristicSolution(BaseSolution):
         self.m = 0
 
     def calculateG(self, R, S, f):
-        g = []
-        for i in xrange(self.n):
-            g.append([0] * self.m)
+        g = [[0] * self.m for i in xrange(self.n)]
 
         for j in xrange(self.m):
             if S[j] == 1:
@@ -20,6 +18,7 @@ class HeuristicSolution(BaseSolution):
                 if R[i] == 1:
                     continue
 
+                # compute g_{ij} using given i & j
                 temp = 0.0
                 for k in xrange(self.n):
                     if k == i or R[k] == 1:
@@ -76,10 +75,8 @@ class HeuristicSolution(BaseSolution):
         S = [0] * self.m
         cost = 0
 
+        # at most N interation
         for i in xrange(self.n):
-            if sum(S) == self.m:
-                return cost
-
             # step 1. compute g_ij
             g = self.calculateG(R, S, f)
 
@@ -109,6 +106,11 @@ class HeuristicSolution(BaseSolution):
             for j in xrange(self.m):
                 if Ss[index][j] == 1:
                     S[j] = 1
+
+            # step 6
+            if sum(S) == self.m:
+                return cost
+
 
         if sum(S) != self.m:
             raise Exception("Can not cover all device")
