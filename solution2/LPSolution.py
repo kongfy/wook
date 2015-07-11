@@ -21,7 +21,7 @@ class LPSolution(BaseSolution):
 
         prob = LpProblem('opt', LpMinimize)
 
-        y = [LpVariable('y_' + str(i), lowBound=0, upBound=1) for i in xrange(self.n)]
+        y = [LpVariable('y_' + str(i), lowBound=0) for i in xrange(self.n)]
         x = [[LpVariable('x_' + str(i) + '_' + str(j), lowBound=0) for j in xrange(self.m)] for i in xrange(self.n)]
 
         # optimize target (4a)

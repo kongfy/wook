@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from Base import BaseSolution
-from math import floor
+from math import floor, ceil
 from pprint import pprint
 
 class PDBSolution(BaseSolution):
@@ -96,10 +96,8 @@ class PDBSolution(BaseSolution):
                     if g[i][j] == 1:
                         color[j] = True
 
-        y = [0] * self.n
         for i in xrange(self.n):
             if D[i]:
-                y[i] = 1
                 selected[i] = 2 # final selected
 
         x = [[0] * self.m for i in xrange(self.n)]
@@ -125,7 +123,15 @@ class PDBSolution(BaseSolution):
                             x[h][j] = 1
                             break
 
+        y = [0] * self.n
+        for i in xrange(self.n):
+            if D[i]:
+                y[i] = ceil(float(sum([t[i][j] * x[i][j] for j in xrange(self.m)])) / T[i])
+
         assert(sum([x[i][j] for i in xrange(self.n) for j in xrange(self.m)]) == self.m)
+        for i in xrange(self.n):
+            if not T[i] * y[i] - sum([t[i][j] * x[i][j] for j in xrange(self.m)]) >= 0:
+                print "[Warning] Primal Constrains are broken!"
 
         self.output(x, y)
 
