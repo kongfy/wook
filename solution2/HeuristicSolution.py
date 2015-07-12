@@ -15,17 +15,14 @@ class HeuristicSolution(BaseSolution):
                 continue
 
             for i in xrange(self.n):
-                if R[i] == 1:
-                    continue
-
                 # compute g_{ij} using given i & j
                 temp = 0.0
                 for k in xrange(self.n):
-                    if k == i or R[k] == 1:
+                    if k == i:
                         continue
                     temp += f[k][j]
 
-                g[i][j] = temp / (self.n - (sum(R) + 1))
+                g[i][j] = temp / (self.n - 1)
 
         return g
 
@@ -60,9 +57,6 @@ class HeuristicSolution(BaseSolution):
         Ss = [[]] * self.n
 
         for i in xrange(self.n):
-            if R[i] == 1:
-                continue
-
             Ss[i] = self.knapsack(S, T[i], t[i], g[i])
 
         return Ss
@@ -75,8 +69,7 @@ class HeuristicSolution(BaseSolution):
         S = [0] * self.m
         cost = 0
 
-        # at most N interation
-        for i in xrange(self.n):
+        while True:
             # step 1. compute g_ij
             g = self.calculateG(R, S, f)
 
@@ -86,16 +79,12 @@ class HeuristicSolution(BaseSolution):
             # step 3. compute e_i
             e = [0] * self.n
             for i in xrange(self.n):
-                if R[i] == 1:
-                    continue
                 e[i] = sum([f[i][j] for j in xrange(self.m) if Ss[i][j] == 1]) + c[i]
 
             # step 4. choose route
             temp = None
             index = None
             for i in xrange(self.n):
-                if R[i] == 1:
-                    continue
                 num = sum(Ss[i])
                 if num == 0:
                     continue
@@ -103,9 +92,12 @@ class HeuristicSolution(BaseSolution):
                     temp = e[i]
                     index = i
 
+            if index == None:
+                raise Exception("Can not cover all device")
+
             # update
             cost += temp
-            R[index] = 1
+            R[index] += 1
             for j in xrange(self.m):
                 if Ss[index][j] == 1:
                     S[j] = 1
@@ -113,9 +105,3 @@ class HeuristicSolution(BaseSolution):
             # step 6
             if sum(S) == self.m:
                 return cost
-
-
-        if sum(S) != self.m:
-            raise Exception("Can not cover all device")
-
-        return cost
