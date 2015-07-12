@@ -61,8 +61,8 @@ def main():
 
     results = [task.get() for task in tasks]
 
-    result1 = [[0, float('inf'), 0], [0, float('inf'), 0], [0, float('inf'), 0]]
-    result2 = [[0, float('inf'), 0], [0, float('inf'), 0], [0, float('inf'), 0]]
+    result1 = [[0, float('inf'), 0, 0], [0, float('inf'), 0, 0], [0, float('inf'), 0, 0]]
+    result2 = [[0, float('inf'), 0, 0], [0, float('inf'), 0, 0], [0, float('inf'), 0, 0]]
 
     for result in results:
         s1, s2 = result
@@ -70,15 +70,19 @@ def main():
         for i in xrange(3):
             result1[i][0] = max(result1[i][0], s1[i][1])
             result1[i][1] = min(result1[i][1], s1[i][1])
-            result1[i][2] += s1[i][0]
+            result1[i][2] += s1[i][1]
+            result1[i][3] += s1[i][0]
 
             result2[i][0] = max(result2[i][0], s2[i][1])
             result2[i][1] = min(result2[i][1], s2[i][1])
-            result2[i][2] += s2[i][0]
+            result2[i][2] += s2[i][1]
+            result2[i][3] += s2[i][0]
 
     for i in xrange(3):
         result1[i][2] /= CFG['times']
         result2[i][2] /= CFG['times']
+        result1[i][3] /= CFG['times']
+        result2[i][3] /= CFG['times']
 
     f = open('summary.txt', 'a')
     f.write('N=' + str(CFG['N']) + ', M=' + str(CFG['M']) + ': ' + str([result1, result2]) + '\n')
