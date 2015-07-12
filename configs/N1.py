@@ -5,8 +5,8 @@ Config file for wook project
 """
 
 CFG = {
-    'N' : 10,
-    'M' : 10,
+    'N' : 20,
+    'M' : 100,
     'a' : 1,
     'b' : 10,
     'E' : 0.5,
