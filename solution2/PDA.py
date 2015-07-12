@@ -4,7 +4,7 @@ from Base import BaseSolution
 from math import floor, ceil
 from pprint import pprint
 
-class PDBSolution(BaseSolution):
+class PDA(BaseSolution):
     def __init__(self):
         self.n = 0
         self.m = 0

@@ -3,24 +3,24 @@
 from pprint import pprint
 from generator import generate
 
-import solution.HeuristicSolution
 import solution.LPSolution
-import solution.HeuristicSolution2
+import solution.SCA
+import solution.ISCA
 import solution2.LPSolution
-import solution2.PDBSolution
-import solution2.HeuristicSolution
+import solution2.PDA
+import solution2.IPDA
 
 def worker():
     c, T, t, f = generate()
 
     solvers1 = [solution.LPSolution.LPSolution(),
-                solution.HeuristicSolution2.HeuristicSolution2(),
-                solution.HeuristicSolution.HeuristicSolution()]
+                solution.SCA.SCA(),
+                solution.ISCA.ISCA()]
 
 
     solvers2 = [solution2.LPSolution.LPSolution(),
-                solution2.PDBSolution.PDBSolution(),
-                solution2.HeuristicSolution.HeuristicSolution()]
+                solution2.PDA.PDA(),
+                solution2.IPDA.IPDA()]
 
     return [[solver.solve(c, T, t, f) for solver in solvers1], [solver.solve(c, T, t, f) for solver in solvers2]]
 

@@ -2,7 +2,7 @@
 
 from Base import BaseSolution
 
-class HeuristicSolution(BaseSolution):
+class ISCA(BaseSolution):
     def __init__(self):
         self.n = 0
         self.m = 0
