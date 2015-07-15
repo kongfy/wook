@@ -84,8 +84,12 @@ class PDA(BaseSolution):
         # here we got G_f^2
 
         D = [False] * self.n # maximal independent set
+        v = [(float(c[i]) / T[i], i) for i in xrange(self.n)]
+        sort_v = sorted(v, key=lambda x: x[0])
         color = [False] * self.n
-        for i in xrange(self.n):
+
+        for k in xrange(self.n):
+            i = sort_v[k][1]
             # induced by R_t
             if selected[i] != 1:
                 continue
@@ -118,10 +122,15 @@ class PDA(BaseSolution):
                 if D[k]:
                     x[k][j] = 1
                 else:
+                    index = None
                     for h in xrange(self.n):
                         if g[k][h] == 1 and D[h]:
-                            x[h][j] = 1
-                            break
+                            if index == None:
+                                index = h
+                            elif v[h] < v[index]:
+                                index = h
+
+                    x[index][j] = 1
 
         y = [0] * self.n
         for i in xrange(self.n):
